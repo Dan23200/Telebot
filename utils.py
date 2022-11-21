@@ -2,11 +2,13 @@ from datetime import datetime
 from dbase import UserDB
 from dbase import QuestionDB
 
+
 messages = {
     'start': 'Приветсвую! Я бот, который собирает вопросы для чата',
     'get_question': 'Напишите свой вопрос',
     'question_btn_text': 'Оставить вопрос',
-    'success': 'Готово! Ваш вопрос успешно сохранен!'
+    'success': 'Готово! Ваш вопрос успешно сохранен!',
+    'new_question': 'Новый вопрос от пользователя @{}'
 }
 
 database_dict = {
@@ -34,5 +36,6 @@ def set_question_from_message(message, connect):
         "question": message.text,
         "message_date": datetime.now(),
     }
-    question_db = QuestionDB(connect)
-    question_db.add_question(question)
+    user_db = QuestionDB(connect)
+    user_db.add_question(question)
+

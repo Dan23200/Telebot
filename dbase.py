@@ -8,10 +8,17 @@ class QuestionDB(BaseDB):
     def add_question(self, question):
         cursor = self.db.cursor()
         cursor.execute(
-            'INSERT INTO question (id, user_id, question, message_date) VALUES (?, ?, ?, ?)',
-            (question['id'], question['user_id'], question['question'], question['message_date'])
+            'INSERT INTO question (user_id, question, message_date) VALUES (?, ?, ?)',
+            (question['user_id'], question['question'], question['message_date'])
         )
         self.db.commit()
+
+    def get_question_id_by_info(self, question):
+        cursor = self.db.cursor()
+        cursor.execute(
+            """SELECT user_id FROM question WHERE user_id = (?, ?, ?), """,
+            (question['user_id'], question['question'], question['message_date'])
+        )
 
 
 class UserDB(BaseDB):

@@ -1,14 +1,17 @@
 from telebot import types
-import telebot
+from telebot import TeleBot
 import sqlite3
+import telebot
 from utils import messages
 from utils import set_user_from_message
 from utils import set_question_from_message
+
 from dbase import create_tables
 
 
-bot = telebot.TeleBot("5580320258:AAEYAMH3Gg_XZApHEi4hOgzk7uNqmszUDX8")
+bot = TeleBot("5580320258:AAEYAMH3Gg_XZApHEi4hOgzk7uNqmszUDX8")
 connect = sqlite3.connect('telebot.db', check_same_thread=False)
+admin_id = 596459751
 
 
 @bot.message_handler(commands=['start'])
@@ -36,8 +39,22 @@ def register_question(message):
         bot.send_message(message.from_user.id, messages['get_question'])
         bot.register_next_step_handler(message, register_question)
         return
-    set_question_from_message(message, connect)
+    question_id = set_question_from_message(message, connect)
+
     bot.send_message(message.from_user.id, messages['success'])
+    send_to_admin(question_id, message)
+
+
+def send_to_admin(question_id, message):
+    button_approve = types.InlineKeyboardButton('approve', callback_data='approve')
+    button_disapprove = types.InlineKeyboardButton('disapprove', callback_data='disapprove')
+    keyboard = types.InlineKeyboardMarkup()
+    keyboard.add(button_approve)
+    keyboard.add(button_disapprove)
+    bot.send_message(admin_id, messages['new_question'].format(message.from_user.username))
+    text = f'{question_id}. {message.text}'
+    message = bot.send_message(admin_id, text=text, reply_markup=keyboard)
+    return message
 
 
 if __name__ == '__main__':
