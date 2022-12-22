@@ -5,17 +5,37 @@ import telebot
 from utils import messages
 from utils import set_user_from_message
 from utils import set_question_from_message
-
 from dbase import create_tables
-
+import requests
 
 bot = TeleBot("5580320258:AAEYAMH3Gg_XZApHEi4hOgzk7uNqmszUDX8")
 connect = sqlite3.connect('telebot.db', check_same_thread=False)
 admin_id = 596459751
+channel_id = -1001627798905
+
+
+# def send_telegram(text: str):
+#     token = "5580320258:AAEYAMH3Gg_XZApHEi4hOgzk7uNqmszUDX8"
+#     url = "https://t.me/TeleBotTest123"
+#     channel_id = "@TeleBotTest123"
+#     url += token
+#     method = url + "/sendMessage"
+#
+#     r = requests.post(method, data={
+#         "chat_id": channel_id,
+#         "text": text
+#     })
+#
+#     if r.status_code != 200:
+#         raise Exception("post_text error")
+#
+#
+# if __name__ == '__main__':
+#     send_telegram("hello world!")
 
 
 @bot.message_handler(commands=['start'])
-def user_registration(message):                                #Connection with is database and create table
+def user_registration(message):  # Connection with is database and create table
 
     # User registration
 
@@ -46,8 +66,8 @@ def register_question(message):
 
 
 def send_to_admin(question_id, message):
-    button_approve = types.InlineKeyboardButton('approve', callback_data='approve')
-    button_disapprove = types.InlineKeyboardButton('disapprove', callback_data='disapprove')
+    button_approve = types.InlineKeyboardButton('Approve', callback_data='Approve')
+    button_disapprove = types.InlineKeyboardButton('Disapprove', callback_data='Disapprove')
     keyboard = types.InlineKeyboardMarkup()
     keyboard.add(button_approve)
     keyboard.add(button_disapprove)
@@ -55,6 +75,17 @@ def send_to_admin(question_id, message):
     text = f'{question_id}. {message.text}'
     message = bot.send_message(admin_id, text=text, reply_markup=keyboard)
     return message
+
+
+@bot.callback_query_handler(func=lambda call: True)
+def callback_worker(message):
+    if message.data == "Approve":
+        bot.send_message(admin_id, messages['approve_admin'])
+        bot.send_message(message.from_user.id, messages['approve_user'])
+        bot.send_message(channel_id, message.text)
+    elif message.data == "Disapprove":
+        bot.send_message(admin_id, messages['disapprove_admin'])
+        bot.send_message(message.from_user.id, messages['disapprove_user'])
 
 
 if __name__ == '__main__':

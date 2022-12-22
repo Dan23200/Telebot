@@ -8,7 +8,11 @@ messages = {
     'get_question': 'Напишите свой вопрос',
     'question_btn_text': 'Оставить вопрос',
     'success': 'Готово! Ваш вопрос успешно сохранен!',
-    'new_question': 'Новый вопрос от пользователя @{}'
+    'new_question': 'Новый вопрос от пользователя @{}',
+    'approve_admin': 'Вы одобрили вопрос, сообщение о вашем одобрение прийдет пользователю',
+    'disapprove_admin': 'Вы НЕ одобрили вопрос, сообщение о вашем НЕ одобрение прийдет пользователю',
+    'approve_user': 'Администратор одобрил ваш вопрос ',
+    'disapprove_user': 'Администратор НЕ одобрил ваш вопрос '
 }
 
 database_dict = {
@@ -38,4 +42,5 @@ def set_question_from_message(message, connect):
     }
     user_db = QuestionDB(connect)
     user_db.add_question(question)
-
+    question_id = user_db.get_user_id_by_info(question)
+    return question_id
