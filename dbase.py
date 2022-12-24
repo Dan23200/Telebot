@@ -13,10 +13,10 @@ class QuestionDB(BaseDB):
         )
         self.db.commit()
 
-    def get_user_id_by_info(self, question):
+    def get_question_id_by_info(self, question):
         cursor = self.db.cursor()
         cursor.execute(
-            'SELECT user_id FROM question WHERE user_id = ? AND question = ? AND message_date = ?',
+            'SELECT id FROM question WHERE user_id = ? AND question = ? AND message_date = ?',
             (question['user_id'], question['question'], question['message_date'])
         )
         question_id = cursor.fetchone()[0]

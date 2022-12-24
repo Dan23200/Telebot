@@ -42,5 +42,5 @@ def set_question_from_message(message, connect):
     }
     user_db = QuestionDB(connect)
     user_db.add_question(question)
-    question_id = user_db.get_user_id_by_info(question)
+    question_id = user_db.get_question_id_by_info(question)
     return question_id
